@@ -56,7 +56,7 @@ void adauga_eveniment(lista *prioritate, int prio, int ID, int timp)
 			{
 				eveniment *aux = prioritate[prio-1].sublista;
 				
-				while(aux!=NULL && aux->next->timp < timp)
+				while(aux->next!=NULL && aux->next->timp < timp)
 					aux = aux->next;
 					
 				if(aux->next!=NULL)
@@ -66,7 +66,7 @@ void adauga_eveniment(lista *prioritate, int prio, int ID, int timp)
 				}
 				else
 				{
-					aux->last->next = new_event;
+					aux->next = new_event;
 					aux->last = new_event;
 					
 				}
@@ -99,19 +99,29 @@ void deservire_eveniment(lista *prioritate)
 	{
 		if(prioritate[i].sublista)
 		{
+			eveniment* new_p = (eveniment*)malloc(sizeof(eveniment));
+		if(new_p)
+		{
+				new_p->ID = prioritate[i].sublista->ID;
+				new_p->timp = prioritate[i].sublista->timp;
+				new_p->prio = prioritate[i].sublista->prio;
+				new_p->next = NULL;
 			if(coada == NULL)
 			{
-				coada = prioritate[i].sublista;
-				coada->last = prioritate[i].sublista;
+				
+				coada = new_p;
+				coada->last = new_p;
+			
 			}
 			else
 			{
-				coada->last->next = prioritate[i].sublista;
-				coada->last = prioritate[i].sublista;
+				coada->last->next = new_p;
+				coada->last = new_p;
 			}
 			
 			prioritate[i].sublista = prioritate[i].sublista->next;
 			return;
+		}
 		}
 	}
 }
@@ -133,7 +143,12 @@ int main()
 	init();
 	adauga_eveniment(prioritate, 1, 123, 20);
 	adauga_eveniment(prioritate, 1, 124, 15);
+	
 	adauga_eveniment(prioritate, 2, 230, 25);
+	adauga_eveniment(prioritate, 2, 234, 50);
+	adauga_eveniment(prioritate, 2, 235, 65);
+	adauga_eveniment(prioritate, 2, 235, 30);
+	
 	afisare();
 	deservire_eveniment(prioritate);
 	afisare_coada(coada);
